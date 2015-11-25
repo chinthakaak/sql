@@ -1,0 +1,17 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="1" author="Kushan" runAlways="true" failOnError="false">
+        <sqlFile path="src/main/resources/sql/drop-company-tables.sql"/>
+    </changeSet>
+
+    <changeSet id="2" author="Kushan" runAlways="true" failOnError="false">
+        <sqlFile path="src/main/resources/sql/create-company-tables.sql"/>
+    </changeSet>
+
+    <changeSet id="3" author="Kushan" runAlways="true" failOnError="true">
+        <sqlFile path="src/main/resources/sql/insert-company-data.sql"/>
+    </changeSet>
+
+</databaseChangeLog>
