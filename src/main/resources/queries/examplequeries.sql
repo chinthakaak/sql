@@ -86,5 +86,34 @@ ORDER BY D.Dname asc, E.Lname desc, E.Fname;
 
 --Query 16. Retrieve the name of each employee who has a dependent with the
 --same first name and is the same sex as the employee.
+select fname from employee e, dependent d where fname=dependent_name and e.sex=d.sex and e.ssn=d.essn
 
+-- nested version
+select fname, lname 
+from employee e
+where ssn in
+  (select essn
+  from dependent d 
+  where fname=dependent_name and
+  e.sex=d.sex)
+  
+-- correlated nested queries
+--Whenever a condition in the WHERE clause of a nested query references some attrib-
+--ute of a relation declared in the outer query, the two queries are said to be correlated.
+
+--exists function with correlated nested
+select fname, lname 
+from employee e
+where exists (select * 
+              from dependent d
+              where e.ssn=d.essn
+              and e.sex=d.sex
+              and e.fname=d.dependent_name)
+              
+--Query 6. Retrieve the names of employees who have no dependents. -- correlated nested
+select fname,lname
+from employee e
+where not exists (select *
+                  from dependent d
+                  where e.ssn=d.essn)
 
