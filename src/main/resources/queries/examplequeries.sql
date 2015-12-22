@@ -24,4 +24,67 @@ select distinct salary from employee
 union
 (select distinct pnumber from project, department, employee where ssn = mgr_ssn and lname = 'Smith' and dno=dnumber)
 
+-- using nested queries
+select distinct pnumber 
+from project 
+where pnumber in 
+  (select pnumber 
+  from project, department, employee
+  where dnum = dnumber and ssn = mgr_ssn and lname='Smith')
+  or
+  pnumber in
+  (select pno
+  from employee, works_on
+  where ssn=essn and lname='Smith')
+  
 --Query 12. Retrieve all employees whose address is in Houston, Texas.
+select fname, lname from employee where address like '%ouston, T%'
+
+--Query 12A. Find all employees who were born during the 1950s.
+select fname from employee where bdate like '_______5_'
+
+--Query 13. Show the resulting salaries if every employee working on the
+--‘ProductX’ project is given a 10 percent raise.
+
+SELECT
+E.Fname, E.Lname, 1.1 * E.Salary AS Increasedsal
+FROM
+EMPLOYEE E, WORKS_ON W, PROJECT P
+WHERE
+E.Ssn=W.Essn AND W.Pno=P.Pnumber AND
+P.Pname='ProductX'
+
+--Query 14. Retrieve all employees in department 5 whose salary is between
+--$30,000 and $40,000.
+SELECT *
+FROM employee
+WHERE
+(Salary BETWEEN 30000 AND 40000) AND Dno = 5;
+
+--Query 15. Retrieve a list of employees and the projects they are working on,
+--ordered by department and, within each department, ordered alphabetically by
+--last name, then first name.
+SELECT
+D.Dname, E.Lname, E.Fname, P.Pname
+FROM
+DEPARTMENT D, EMPLOYEE E, WORKS_ON W,
+PROJECT P where
+D.Dnumber= E.Dno AND E.Ssn= W.Essn AND
+W.Pno= P.Pnumber
+ORDER BY D.Dname, E.Lname, E.Fname;
+
+--asc desc
+SELECT
+D.Dname, E.Lname, E.Fname, P.Pname
+FROM
+DEPARTMENT D, EMPLOYEE E, WORKS_ON W,
+PROJECT P where
+D.Dnumber= E.Dno AND E.Ssn= W.Essn AND
+W.Pno= P.Pnumber
+ORDER BY D.Dname asc, E.Lname desc, E.Fname;
+
+
+--Query 16. Retrieve the name of each employee who has a dependent with the
+--same first name and is the same sex as the employee.
+
+
