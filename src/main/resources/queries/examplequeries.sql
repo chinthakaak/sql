@@ -97,9 +97,11 @@ where ssn in
   where fname=dependent_name and
   e.sex=d.sex)
   
--- correlated nested queries
+-- correlated nested queries -------------
 --Whenever a condition in the WHERE clause of a nested query references some attrib-
 --ute of a relation declared in the outer query, the two queries are said to be correlated.
+
+-- Means ---> nested query is evaluated once for each tuple (or combination of tuples) in the outer query. 
 
 --exists function with correlated nested
 select fname, lname 
@@ -116,4 +118,64 @@ from employee e
 where not exists (select *
                   from dependent d
                   where e.ssn=d.essn)
+                  
+--Query 7. List the names of managers who have at least one dependent.
+--with 2 nested queries
+select fname, lname
+from employee e
+where exists (select *
+              from dependent d
+              where e.ssn=d.essn)
+              and
+      exists (select *
+              from department dp
+              where dp.mgr_ssn=e.ssn)
+
+--with 1 nested query
+select fname, lname
+from employee e
+where exists (select *
+              from dependent d, department dp
+              where e.ssn=d.essn
+              and dp.mgr_ssn=e.ssn)
+
+--with no nested queries
+select distinct fname, lname
+from employee e, dependent d, department dp
+where e.ssn=d.essn
+and dp.mgr_ssn=e.ssn
+
+--The query Q3: Retrieve the name of each employee who works on all the projects con-
+--trolled by department number 5
+select distinct fname, lname
+from employee, works_on, project
+where ssn=essn
+and pno=pnumber
+and dnum=5
+
+
+select fname, lname
+from employee
+where not exists (( select pnumber
+                  from project
+                  where dnum=5)
+                  except ( select pno
+                          from works_on
+                          where ssn=essn))
+
+
+-- There is another SQL function, UNIQUE(Q), which returns TRUE if there are no
+-- duplicate tuples in the result of query Q; otherwise, it returns FALSE. This can be
+-- used to test whether the result of a nested query is a set or a multiset.
+
+
+--Query 17. Retrieve the Social Security numbers of all employees who work on
+-- project numbers 1, 2, or 3.
+select distinct essn
+from  works_on
+where pno in (1,2,3)
+
+
+
+--- SQL JOINS ---
 
