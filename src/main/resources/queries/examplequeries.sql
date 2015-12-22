@@ -161,7 +161,7 @@ where not exists (( select pnumber
                   where dnum=5)
                   except ( select pno
                           from works_on
-                          where ssn=essn))
+                          where ssn=essn)) ????
 
 
 -- There is another SQL function, UNIQUE(Q), which returns TRUE if there are no
@@ -178,4 +178,51 @@ where pno in (1,2,3)
 
 
 --- SQL JOINS ---
+--The concept of a joined table (or joined relation) was incorporated into SQL to
+--permit users to specify a table resulting from a join operation in the FROM clause of
+--a query. This construct may be easier to comprehend than mixing together all the
+--select and join conditions in the WHERE clause. 
+
+--1. Join / inner join
+---The default type of join in a joined table is called an inner join, where a tuple is
+---included in the result only if a matching tuple exists in the other relation.
+
+-- Retrieve all employees who are in 'Research' department
+select fname, lname
+from (employee join department on dno=dnumber)
+where dname='Research'
+
+select fname, lname
+from (employee inner join department on dno=dnumber)
+where dname='Research'
+
+select e.fname, e.lname
+from (employee e join employee e2 on e.ssn=e2.super_ssn)
+
+--The FROM clause in Q1A contains a single joined table
+
+--2. Natural Join 
+      -- no join condition is specified
+      -- join attributes need to be in same names unless need to rename 
+select fname, lname
+from employee e natural join department dept(dname, dno,s,ss) ???
+where dname='Research'
+
+--3. Outer join
+-- inner join
+select e.fname, e.lname,e.ssn,e2.fname, e2.lname,e2.super_ssn
+from (employee e inner join employee e2 on e.ssn=e2.super_ssn)
+
+--left outer join
+select e.fname, e.lname,e.ssn,e2.fname, e2.lname,e2.super_ssn
+from (employee e left outer join employee e2 on e.ssn=e2.super_ssn)
+
+--right outer join
+select e.fname, e.lname,e.ssn,e2.fname, e2.lname,e2.super_ssn
+from (employee e right outer join employee e2 on e.ssn=e2.super_ssn)
+
+--full outer join
+select e.fname, e.lname,e.ssn,e2.fname, e2.lname,e2.super_ssn
+from (employee e full outer join employee e2 on e.ssn=e2.super_ssn)
+
 
