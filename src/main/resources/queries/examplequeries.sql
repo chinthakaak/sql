@@ -225,4 +225,118 @@ from (employee e right outer join employee e2 on e.ssn=e2.super_ssn)
 select e.fname, e.lname,e.ssn,e2.fname, e2.lname,e2.super_ssn
 from (employee e full outer join employee e2 on e.ssn=e2.super_ssn)
 
+--Query 19. Find the sum of the salaries of all employees, the maximum salary,
+--the minimum salary, and the average salary.
+select count(*) from employee
 
+select sum(salary) from employee
+
+select sum(salary), max(salary), min(salary), avg(salary) from employee
+
+select sum(salary) as sum, max(salary) as max, min(salary) as min, avg(salary) as avg from employee
+
+select sum(salary), max(ssn) from employee
+
+-- for reasearch department
+--Query 20. Find the sum of the salaries of all employees of the ‘Research’
+--department, as well as the maximum salary, the minimum salary, and the aver-
+--age salary in this department.
+
+select sum(salary), max(salary), min(salary), avg(salary) 
+from employee join department on dno=dnumber
+where dname='Research'
+
+--Queries 21 and 22. Retrieve the total number of employees in the company
+--(Q21) and the number of employees in the ‘Research’ department (Q22).
+select count(*) as total_num_emp
+from employee
+
+select count(*) as total_research_emp 
+from employee join department on dno=dnumber
+where dname='Research'
+
+--Query 23. Count the number of distinct salary values in the database.
+
+select count(distinct salary) as sals
+from employee
+
+-- to retrieve the names of all employees who have two or more dependents
+--(Query 5), we can write the following:
+select fname, lname
+from employee
+where (select count(*)
+      from  dependent 
+      where ssn=essn) >= 2)
+      
+ 
+-- Group By - for partitionin
+--to subgroups of tuples in a
+--relation,
+--Query 24. For each department, retrieve the department number, the number
+--of employees in the department, and their average salary.
+select dno, count(*),avg(salary)
+from employee
+group by dno
+
+--group by dependent ssn
+select essn, count(*)
+from dependent
+group by essn
+
+--If NULLs exist in the grouping attribute, then a separate group is created for all
+--tuples with a NULL value in the grouping attribute.
+select super_ssn, count(*)
+from employee
+group by super_ssn
+              
+--Query 25. For each project, retrieve the project number, the project name, and
+--the number of employees who work on that project.
+select pnumber, pname, count(*)
+from project join works_on on pno=pnumber
+group by pnumber, pname
+
+select pnumber, pname, count(*)
+from project join works_on on pno=pnumber
+group by pnumber, pname     
+order by pnumber asc
+
+-- Having - Sometimes we want to retrieve the values of these functions only for groups that sat-
+---isfy certain conditions. 
+--Query 26. For each project on which more than two employees work, retrieve
+--the project number, the project name, and the number of employees who work
+--on the project.
+select pnumber, pname, count(*)
+from project join works_on on pno=pnumber
+group by pnumber, pname
+having count(*)>2
+
+--Query 27. For each project, retrieve the project number, the project name, and
+--the number of employees from department 5 who work on the project.
+select pnumber, pname, count(*)
+from project join works_on on pno=pnumber
+where dnum=5
+group by pnumber, pname
+
+select pnumber, pname, count(*)
+from (project join works_on on pno=pnumber) join employee on ssn=essn
+where dnum=5
+group by pnumber, pname
+
+--to count the total number of employees whose salaries exceed $40,000 in each
+--department, but only for departments where more than five employees work. 
+
+-- incorrect query
+select dno,dname, count(*)
+from employee join department on dno=dnumber
+where salary > 40000
+group by dno, dname
+having count(*)>1
+
+--correct query ??
+select dno,dname, count(*)
+from employee join department on dno=dnumber
+where salary > 40000
+and (select dno
+      from employee
+      group by dno
+      having count(*)>5 )
